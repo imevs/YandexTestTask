@@ -4,14 +4,17 @@ var Presentator = (function (d, $) {
         if (!(this instanceof Presentator)) {
             return new Presentator(params);
         }
-
         var me = this;
+
+        Presentator.instances = Presentator.instances || [];
+        arguments.callee.instances.push(me);
 
         var log = params.logger || function(msg) {
             window.console.log(msg);
         };
         me.url = params.url || 'images.json';
         me.context = params.context + ' ' || '';
+        me.$context = $(me.context);
         me.selector = params.selector;
         me.prevBtn = params.prevBtn || '.prev';
         me.nextBtn = params.nextBtn || '.next';
@@ -28,14 +31,9 @@ var Presentator = (function (d, $) {
         var tmpImage = $('<img>');
 
         me.init = function () {
-            me.$img.attr('width', me.width);
-            me.$img.attr('height', me.height);
-            me.$prevBtn.click(function () {
-                me.back();
-            });
-            me.$nextBtn.click(function () {
-                me.forward();
-            });
+            me.$prevBtn.click(function () { me.back(); });
+            me.$nextBtn.click(function () { me.forward(); });
+            me.$img.click(function() { me.fullscreenToggle(); });
             $.getJSON(me.url).done(function (data) {
                 me.slides = data.items;
                 me.slidesCount = me.slides.length;
@@ -43,6 +41,29 @@ var Presentator = (function (d, $) {
             });
         };
 
+        me.fullscreenToggle = function() {
+            for (var i = 0; i < Presentator.instances.length; i++) {
+                Presentator.instances[i].fullscreenDisable();
+            }
+            me.$context.toggleClass('span4');
+            me.$context.toggleClass('span10');
+            me.$img.css('width', '100%');
+            me.$img.css('height') == '600px'
+                ? me.$img.css('height', '200px')
+                : me.$img.css('height', '600px');
+        };
+        me.fullscreenEnable = function() {
+            me.$context.removeClass('span4');
+            me.$context.addClass('span10');
+            me.$img.css('width', '100%');
+            me.$img.css('height', '600px');
+        };
+        me.fullscreenDisable = function() {
+            me.$context.addClass('span4');
+            me.$context.removeClass('span10');
+            me.$img.css('width', '100%');
+            me.$img.css('height', '200px');
+        };
         me.loadSlide = function (id) {
             log('loaded tmpImage');
             var imageSrc = me.slides[id];
