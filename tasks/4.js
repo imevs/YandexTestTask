@@ -1,14 +1,18 @@
 var Presentator = (function (d, $) {
 
     return function (params) {
+        if (!(this instanceof Presentator)) {
+            return new Presentator(params);
+        }
+
         var me = this;
 
+        me.url = params.url || 'images.json';
         me.selector = params.selector;
         me.prevBtn = params.prevBtn || '.prev';
         me.nextBtn = params.nextBtn || '.next';
         me.currentSlide = 0;
-        me.url = 'images.json';
-        me.slidesCount = 10;
+        me.slidesCount = 0;
         me.width = 800;
         me.height = 600;
 
@@ -52,6 +56,8 @@ var Presentator = (function (d, $) {
         };
 
         me.init();
+
+        return me;
     }
 
 })(document, jQuery);
