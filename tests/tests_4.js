@@ -44,5 +44,19 @@ TestCase("MyTestCase for Task4", {
         assertEquals(present.currentSlide, 1);
         present.back();
         assertEquals(present.currentSlide, 0);
+    },
+    "test Presentator - check number onload events": function () {
+        var spy = sinon.spy();
+        var present = new Presentator({
+            logger: spy
+        });
+
+        this.server.respond();
+
+        present.forward();
+        present.forward();
+        present.forward();
+        present.forward();
+        assertEquals(spy.callCount, 2);
     }
 });
