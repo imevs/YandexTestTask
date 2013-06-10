@@ -11,6 +11,13 @@
     <script type="text/javascript">
         $(function() {
             Presentator({
+                context: '.first',
+                selector: '.thumbnail img',
+                prevBtn: '.myprev',
+                nextBtn: '.mynext'
+            });
+            Presentator({
+                context: '.second',
                 selector: '.thumbnail img',
                 prevBtn: '.myprev',
                 nextBtn: '.mynext'
@@ -21,7 +28,17 @@
 </head>
 <body>
     <ul class="thumbnails">
-        <li class="span4">
+        <li class="span4 first">
+            <div class="thumbnail">
+                <img data-src="../assets/holder.js/300x200" alt="" id="image">
+            </div>
+            <ul class="pager">
+                <li class="myprev"><a href="#">Previous</a></li>
+                <li class="mynext"><a href="#">Next</a></li>
+            </ul>
+
+        </li>
+        <li class="span4 second">
             <div class="thumbnail">
                 <img data-src="../assets/holder.js/300x200" alt="" id="image">
             </div>

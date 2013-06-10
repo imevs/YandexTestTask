@@ -7,14 +7,17 @@ var Presentator = (function (d, $) {
 
         var me = this;
 
-        me.log = params.logger || window.console.log || function() {};
+        var log = params.logger || function(msg) {
+            window.console.log(msg);
+        };
         me.url = params.url || 'images.json';
+        me.context = params.context + ' ' || '';
         me.selector = params.selector;
-        me.$img = $(me.selector);
         me.prevBtn = params.prevBtn || '.prev';
         me.nextBtn = params.nextBtn || '.next';
-        me.$nextBtn = $(me.nextBtn);
-        me.$prevBtn = $(me.prevBtn);
+        me.$img = $(me.context + me.selector);
+        me.$nextBtn = $(me.context + me.nextBtn);
+        me.$prevBtn = $(me.context + me.prevBtn);
         me.currentSlide = -1;
         me.slidesCount = 0;
         me.width = 800;
@@ -41,7 +44,7 @@ var Presentator = (function (d, $) {
         };
 
         me.loadSlide = function (id) {
-            me.log('loaded tmpImage');
+            log('loaded tmpImage');
             var imageSrc = me.slides[id];
             tmpImage.one('load', function () {
                 me.$img.attr('src', imageSrc);
