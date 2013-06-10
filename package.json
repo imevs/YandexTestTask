@@ -8,7 +8,7 @@
         "test": "java -jar JsTestDriver-1.3.5.jar --config jsTestDriver.conf --tests all --reset"
     },
     "dependencies": {
-        "connect": "*"
+        "connect": "2.7.x"
     },
     "devDependencies": {
         "phantomjs":     "0.2.x"
