@@ -2,6 +2,8 @@
 ==============
 [![Build Status](https://travis-ci.org/imevs/YandexTestTask.png?branch=master)](https://travis-ci.org/imevs/YandexTestTask)
 
+[DEMO for Presenter](http://guarded-badlands-2827.herokuapp.com/tasks/4.html)
+
 Продемонстрируйте свои знания:
 1.Напишите функцию разбора query-строки в набор параметров.
 2.Напишите систему сравнения двух наборов параметров форм (включая html-интерфейс).
