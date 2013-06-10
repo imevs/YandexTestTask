@@ -23,7 +23,7 @@ var parseUrl = function (url) {
         var paramName = decodeURIComponent(s[0]),
             paramValue = decodeURIComponent(s[1]);
         var isArrayItem = isArrayExp.test(paramName);
-        if (isArrayItem) {
+        if (isArrayItem || result[paramName]) {
             paramName = paramName.replace(isArrayExp, '$1');
             var oldVal = result[paramName];
             if (!oldVal) {

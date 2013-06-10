@@ -22,6 +22,13 @@ TestCase("MyTestCase for Task1", {
             param3: 'val3'
         });
     },
+    "test get array from query": function() {
+        var url = '?param=val1&param=val2&param=val3';
+        var result = parseUrl(url);
+        assertEquals(result, {
+            param: ['val1', 'val2', 'val3']
+        });
+    },
     "test get array from query (PHP style)": function() {
         var url = '?param[]=val1&param[]=val2&param[]=val3';
         var result = parseUrl(url);
