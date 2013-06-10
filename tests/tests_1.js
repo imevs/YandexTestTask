@@ -1,4 +1,4 @@
-TestCase("MyTestCase", {
+TestCase("MyTestCase for Task1", {
     "test Check result type": function () {
         var url = 'http://domain.com?param1=val1&param2=val2&param3=val3';
         var result = parseUrl(url);

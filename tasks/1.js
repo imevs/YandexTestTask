@@ -1,10 +1,15 @@
+function createUrlObject(url) {
+    var a = document.createElement('a');
+    a.href = url;
+    return a;
+}
+
 var parseUrl = function (url) {
     var queryString = url, result = {}, i, s, seg;
     var isArrayExp = /(\w+)\[(\d*)\]/;
 
     if (url.charAt(0) !== '?') {
-        var a = document.createElement('a');
-        a.href = url;
+        var a = createUrlObject(url);
         queryString = a.search;
     }
 
@@ -15,7 +20,8 @@ var parseUrl = function (url) {
 
         s = seg[i].split('=');
 
-        var paramName = s[0], paramValue = s[1];
+        var paramName = decodeURIComponent(s[0]),
+            paramValue = decodeURIComponent(s[1]);
         var isArrayItem = isArrayExp.test(paramName);
         if (isArrayItem) {
             paramName = paramName.replace(isArrayExp, '$1');
