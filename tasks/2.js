@@ -1,3 +1,9 @@
+function serializeForm(form) {
+    var res = $(form).serialize();
+
+    return parseUrl('?' + res);
+}
+
 function compareFormParams(params1, params2) {
     var paramsStatus = {};
 
@@ -31,4 +37,10 @@ function compareFormParams(params1, params2) {
     }
 
     return paramsStatus;
+}
+
+function compareForms(form1, form2) {
+    var form1Params = serializeForm(form1);
+    var form2Params = serializeForm(form2);
+    return compareFormParams(form1Params, form2Params);
 }
