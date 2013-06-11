@@ -1,4 +1,4 @@
-var Presentator = (function (w, $) {
+var Presentator = (function (w, d, $) {
 
     var statics = {
         instances: [],
@@ -8,7 +8,7 @@ var Presentator = (function (w, $) {
         },
         initHotKeys: function() {
             var self = this;
-            self.instances.length == 1 && $(window).keyup(function(event) {
+            self.instances.length == 1 && $(d).keyup(function(event) {
                 var activePresentation = self.currentPresentation;
                 if (!activePresentation) return;
 
@@ -40,7 +40,7 @@ var Presentator = (function (w, $) {
         statics.addToPool(me);
 
         var log = params.logger || function(msg) {
-            window.console.log(msg);
+            w.console.log(msg);
         };
         me.url = params.url || 'images.json';
         me.context = params.context + ' ' || '';
@@ -124,4 +124,4 @@ var Presentator = (function (w, $) {
         return me;
     }
 
-})(window, jQuery);
+})(window, document, jQuery);
