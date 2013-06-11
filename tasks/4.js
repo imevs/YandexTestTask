@@ -63,6 +63,7 @@ var Presentator = (function (d, $) {
             }
             me.$context.toggleClass('span4');
             me.$context.toggleClass('span10');
+            me.$img.css('width', '100%');
             me.$img.css('height') == '600px'
                 ? me.$img.css('height', '200px')
                 : me.$img.css('height', '600px');
