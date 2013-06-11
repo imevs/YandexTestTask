@@ -1,4 +1,4 @@
-var Presentator = (function (d, $) {
+var Presentator = (function (w, $) {
 
     return function (params) {
         if (!(this instanceof Presentator)) {
@@ -41,7 +41,7 @@ var Presentator = (function (d, $) {
                 me.setActiveSlide(0);
             });
 
-            $(window).keyup(function(event) {
+            $(w).keyup(function(event) {
                 var activePresentation = Presentator.currentPresentation;
                 if (!activePresentation) return;
 
@@ -109,4 +109,4 @@ var Presentator = (function (d, $) {
         return me;
     }
 
-})(document, jQuery);
+})(window, jQuery);
