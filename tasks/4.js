@@ -1,13 +1,43 @@
 var Presentator = (function (w, $) {
 
+    var statics = {
+        instances: [],
+        currentPresentation: null,
+        addToPool: function(obj) {
+            statics.instances.push(obj);
+        },
+        initHotKeys: function() {
+            var self = this;
+            self.instances.length == 1 && $(window).keyup(function(event) {
+                var activePresentation = self.currentPresentation;
+                if (!activePresentation) return;
+
+                if (event.keyCode == 37 || event.keyCode == 38) {
+                    activePresentation.back();
+                }
+                if (event.keyCode == 39 || event.keyCode == 40) {
+                    activePresentation.forward();
+                }
+            });
+        },
+        disableFullScreenForAll: function(current) {
+            var self = this;
+            self.currentPresentation = current;
+            for (var i = 0; i < self.instances.length; i++) {
+                if (self.instances[i] !== self.currentPresentation) {
+                    self.instances[i].fullscreenDisable();
+                }
+            }
+        }
+    };
+
     return function (params) {
         if (!(this instanceof Presentator)) {
             return new Presentator(params);
         }
         var me = this;
 
-        Presentator.instances = Presentator.instances || [];
-        Presentator.instances.push(me);
+        statics.addToPool(me);
 
         var log = params.logger || function(msg) {
             window.console.log(msg);
@@ -40,27 +70,12 @@ var Presentator = (function (w, $) {
                 me.slidesCount = me.slides.length;
                 me.setActiveSlide(0);
             });
-
-            Presentator.instances.length == 1 && $(w).keyup(function(event) {
-                var activePresentation = Presentator.currentPresentation;
-                if (!activePresentation) return;
-
-                if (event.keyCode == 37 || event.keyCode == 38) {
-                    activePresentation.back();
-                }
-                if (event.keyCode == 39 || event.keyCode == 40) {
-                    activePresentation.forward();
-                }
-            })
+            statics.initHotKeys();
         };
 
         me.fullscreenToggle = function() {
-            Presentator.currentPresentation = me;
-            for (var i = 0; i < Presentator.instances.length; i++) {
-                if (Presentator.instances[i] !== Presentator.currentPresentation) {
-                    Presentator.instances[i].fullscreenDisable();
-                }
-            }
+            statics.disableFullScreenForAll(me);
+
             me.$context.toggleClass('span4');
             me.$context.toggleClass('span10');
             me.$img.css('width', '100%');
