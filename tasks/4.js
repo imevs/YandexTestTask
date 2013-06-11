@@ -41,7 +41,7 @@ var Presentator = (function (w, $) {
                 me.setActiveSlide(0);
             });
 
-            $(w).keyup(function(event) {
+            Presentator.instances.length == 1 && $(w).keyup(function(event) {
                 var activePresentation = Presentator.currentPresentation;
                 if (!activePresentation) return;
 
@@ -74,9 +74,9 @@ var Presentator = (function (w, $) {
             me.$img.css('height', '200px');
         };
         me.loadSlide = function (id) {
-            log('loaded tmpImage');
             var imageSrc = me.slides[id];
             tmpImage.one('load', function () {
+                log('loaded ' + id);
                 me.$img.attr('src', imageSrc);
             });
             tmpImage.attr('src', imageSrc);
