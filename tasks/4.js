@@ -33,35 +33,43 @@ var Presentator = (function (d, $) {
         me.init = function () {
             me.$prevBtn.click(function () { me.back(); });
             me.$nextBtn.click(function () { me.forward(); });
+            me.$img.css('width', '100%');
             me.$img.click(function() { me.fullscreenToggle(); });
             $.getJSON(me.url).done(function (data) {
                 me.slides = data.items;
                 me.slidesCount = me.slides.length;
                 me.setActiveSlide(0);
             });
+
+            $(window).keyup(function(event) {
+                var activePresentation = Presentator.currentPresentation;
+                if (!activePresentation) return;
+
+                if (event.keyCode == 37 || event.keyCode == 38) {
+                    activePresentation.back();
+                }
+                if (event.keyCode == 39 || event.keyCode == 40) {
+                    activePresentation.forward();
+                }
+            })
         };
 
         me.fullscreenToggle = function() {
+            Presentator.currentPresentation = me;
             for (var i = 0; i < Presentator.instances.length; i++) {
-                Presentator.instances[i].fullscreenDisable();
+                if (Presentator.instances[i] !== Presentator.currentPresentation) {
+                    Presentator.instances[i].fullscreenDisable();
+                }
             }
             me.$context.toggleClass('span4');
             me.$context.toggleClass('span10');
-            me.$img.css('width', '100%');
             me.$img.css('height') == '600px'
                 ? me.$img.css('height', '200px')
                 : me.$img.css('height', '600px');
         };
-        me.fullscreenEnable = function() {
-            me.$context.removeClass('span4');
-            me.$context.addClass('span10');
-            me.$img.css('width', '100%');
-            me.$img.css('height', '600px');
-        };
         me.fullscreenDisable = function() {
             me.$context.addClass('span4');
             me.$context.removeClass('span10');
-            me.$img.css('width', '100%');
             me.$img.css('height', '200px');
         };
         me.loadSlide = function (id) {
