@@ -7,7 +7,7 @@ var Presentator = (function (d, $) {
         var me = this;
 
         Presentator.instances = Presentator.instances || [];
-        arguments.callee.instances.push(me);
+        Presentator.instances.push(me);
 
         var log = params.logger || function(msg) {
             window.console.log(msg);
