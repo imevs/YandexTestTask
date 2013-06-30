@@ -7,10 +7,30 @@
     <script type="text/javascript" src="../assets/jquery-1.10.1.js"></script>
     <script src="../assets/bootstrap.min.js"></script>
     <script type="text/javascript" src="4.js"></script>
+    <style>
+        .imgthumb {
+            width: 300px;
+            height: 200px;
+        }
+
+        .imgfull {
+            width: 780px;
+            height: 600px;
+        }
+    </style>
 </head>
 <body>
     <ul class="thumbnails">
-        <li class="span4 presentator" data-url="images2.json">
+        <li class="span4 presentator">
+            <img class="thumbnail">
+            <ul class="pager">
+                <li class="prev"><a href="#">Previous</a></li>
+                <li class="next"><a href="#">Next</a></li>
+            </ul>
+        </li>
+        <li class="span4 presentator"
+            data-url="http://api.vkontakte.ru/method/photos.get?gid=20629724&aid=173443310"
+            data-root="response" data-key="src_big">
             <img class="thumbnail">
             <ul class="pager">
                 <li class="prev"><a href="#">Previous</a></li>
