@@ -28,29 +28,36 @@ var Presentator = (function (w, d, $) {
                     self.instances[i].fullscreenDisable();
                 }
             }
+        },
+        init: function() {
+            $(function() {
+                $('.presentator').each(function() {
+                    Presentator({context: $(this)});
+                });
+            });
         }
     };
 
-    return function (params) {
+    var instance = function (params) {
         if (!(this instanceof Presentator)) {
             return new Presentator(params);
         }
         var me = this;
+
+        me.statics = statics;
 
         statics.addToPool(me);
 
         var log = params.logger || function(msg) {
             w.console.log(msg);
         };
-        me.url = params.url || 'images.json';
-        me.context = params.context + ' ' || '';
-        me.$context = $(me.context);
-        me.selector = params.selector;
+        me.$context = $(params.context);
+        me.url = params.url || me.$context.data('url') || 'images.json';
         me.prevBtn = params.prevBtn || '.prev';
         me.nextBtn = params.nextBtn || '.next';
-        me.$img = $(me.context + me.selector);
-        me.$nextBtn = $(me.context + me.nextBtn);
-        me.$prevBtn = $(me.context + me.prevBtn);
+        me.$nextBtn = $(me.nextBtn, me.$context);
+        me.$prevBtn = $(me.prevBtn, me.$context);
+        me.$img = $('img', me.$context);
         me.currentSlide = -1;
         me.slidesCount = 0;
         me.width = 800;
@@ -122,6 +129,8 @@ var Presentator = (function (w, d, $) {
         me.init();
 
         return me;
-    }
+    };
 
+    statics.init();
+    return instance;
 })(window, document, jQuery);

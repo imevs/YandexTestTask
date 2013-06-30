@@ -7,46 +7,15 @@
     <script type="text/javascript" src="../assets/jquery-1.10.1.js"></script>
     <script src="../assets/bootstrap.min.js"></script>
     <script type="text/javascript" src="4.js"></script>
-    <script type="text/javascript">
-        $(function() {
-            Presentator({
-                context: '.first',
-                selector: '.thumbnail img',
-                prevBtn: '.myprev',
-                nextBtn: '.mynext'
-            });
-            Presentator({
-                url: 'images2.json',
-                context: '.second',
-                selector: '.thumbnail img',
-                prevBtn: '.myprev',
-                nextBtn: '.mynext'
-            });
-        });
-
-    </script>
 </head>
 <body>
     <ul class="thumbnails">
-        <li class="span4 first">
-            <div class="thumbnail">
-                <img style="width: 300px; height: 200px" alt="" id="image">
-            </div>
+        <li class="span4 presentator" data-url="images2.json">
+            <img style="width: 300px; height: 200px" class="thumbnail">
             <ul class="pager">
-                <li class="myprev"><a href="#">Previous</a></li>
-                <li class="mynext"><a href="#">Next</a></li>
+                <li class="prev"><a href="#">Previous</a></li>
+                <li class="next"><a href="#">Next</a></li>
             </ul>
-
-        </li>
-        <li class="span4 second">
-            <div class="thumbnail">
-                <img style="width: 300px; height: 200px" alt="" id="image">
-            </div>
-            <ul class="pager">
-                <li class="myprev"><a href="#">Previous</a></li>
-                <li class="mynext"><a href="#">Next</a></li>
-            </ul>
-
         </li>
     </ul>
 </body>
