@@ -60,8 +60,8 @@ var Presentator = (function (w, d, $) {
         me.$img = $('img', me.$context);
         me.currentSlide = -1;
         me.slidesCount = 0;
-        me.width = 800;
-        me.height = 600;
+        me.thumbnailClass = params.thumbnailClass || 'span4';
+        me.fullscreenClass = params.fullscreenClass || 'span10';
 
         me.slides = params.slides;
 
@@ -70,7 +70,6 @@ var Presentator = (function (w, d, $) {
         me.init = function () {
             me.$prevBtn.click(function () { me.back(); });
             me.$nextBtn.click(function () { me.forward(); });
-            me.$img.css('width', '100%');
             me.$img.click(function() { me.fullscreenToggle(); });
             $.getJSON(me.url).done(function (data) {
                 me.slides = data.items;
@@ -82,18 +81,12 @@ var Presentator = (function (w, d, $) {
 
         me.fullscreenToggle = function() {
             statics.disableFullScreenForAll(me);
-
-            me.$context.toggleClass('span4');
-            me.$context.toggleClass('span10');
-            me.$img.css('width', '100%');
-            me.$img.css('height') == '600px'
-                ? me.$img.css('height', '200px')
-                : me.$img.css('height', '600px');
+            me.$context.toggleClass(me.thumbnailClass);
+            me.$context.toggleClass(me.fullscreenClass);
         };
         me.fullscreenDisable = function() {
-            me.$context.addClass('span4');
-            me.$context.removeClass('span10');
-            me.$img.css('height', '200px');
+            me.$context.addClass(me.thumbnailClass);
+            me.$context.removeClass(me.fullscreenClass);
         };
         me.loadSlide = function (id) {
             var imageSrc = me.slides[id];
