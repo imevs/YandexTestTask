@@ -1,4 +1,4 @@
-var Presentator = (function (w, d, $) {
+(function (w, d, $) {
 
     var statics = {
         instances: [],
@@ -29,21 +29,19 @@ var Presentator = (function (w, d, $) {
         },
         init: function () {
             $(function () {
-                $('.presentator').each(function () {
-                    Presentator({context: $(this)});
-                });
+                $('.presentator').presentator();
                 statics.initHotKeys();
             });
         }
     };
 
-    var instance = function (params) {
-        if (!(this instanceof Presentator)) {
-            return new Presentator(params);
+    var Presentator = function (options) {
+        if (!(this instanceof arguments.callee)) {
+            return new arguments.callee(options);
         }
         var me = this,
             tmpImage = $('<img>'),
-            log = params.logger || function (msg) {
+            log = options.logger || function (msg) {
                 w.console.log(msg);
             };
 
@@ -51,20 +49,24 @@ var Presentator = (function (w, d, $) {
 
         statics.addToPool(me);
 
-        me.$context = $(params.context);
-        me.url = params.url || me.$context.data('url') || 'images.json';
-        me.prevBtn = params.prevBtn || '.prev';
-        me.nextBtn = params.nextBtn || '.next';
-        me.$nextBtn = $(me.nextBtn, me.$context);
-        me.$prevBtn = $(me.prevBtn, me.$context);
+        me.$context = $(options.context);
+
+        var settings = $.extend( {
+            'url'             : me.$context.data('url') || 'images.json',
+            'prevBtn'         : '.prev',
+            'nextBtn'         : '.next',
+            'thumbnailClass'  : 'span4',
+            'fullscreenClass' : 'span10'
+        }, options);
+        settings.dataRoot = me.$context.data('root') || 'items';
+        settings.dataSrcKey = me.$context.data('key') || '';
+
+        me.$nextBtn = $(settings.nextBtn, me.$context);
+        me.$prevBtn = $(settings.prevBtn, me.$context);
         me.$img = $('img', me.$context);
         me.currentSlide = -1;
         me.slidesCount = 0;
-        me.thumbnailClass = params.thumbnailClass || 'span4';
-        me.fullscreenClass = params.fullscreenClass || 'span10';
-        me.slides = params.slides;
-        me.dataRoot = me.$context.data('root') || 'items';
-        me.dataSrcKey = me.$context.data('key') || '';
+        me.slides = options.slides;
 
         me.init = function () {
             me.$prevBtn.click(function () { me.back(); });
@@ -72,9 +74,9 @@ var Presentator = (function (w, d, $) {
             me.$img.click(function () { me.fullscreenToggle(); });
             me.$img.addClass('imgthumb');
             me.setActiveSlide(0);
-            $.getJSON(me.url).done(function (data) {
-                me.slides = $.map(data[me.dataRoot], function (item) {
-                    return me.dataSrcKey ? item[me.dataSrcKey] : item;
+            $.getJSON(settings.url).done(function (data) {
+                me.slides = $.map(data[settings.dataRoot], function (item) {
+                    return settings.dataSrcKey ? item[settings.dataSrcKey] : item;
                 });
                 me.slidesCount = me.slides.length;
                 me.setActiveSlide(0);
@@ -86,17 +88,18 @@ var Presentator = (function (w, d, $) {
             statics.disableFullScreenForAll(me);
             me.$img.toggleClass('imgthumb');
             me.$img.toggleClass('imgfull');
-            me.$context.toggleClass(me.thumbnailClass);
-            me.$context.toggleClass(me.fullscreenClass);
+            me.$context.toggleClass(settings.thumbnailClass);
+            me.$context.toggleClass(settings.fullscreenClass);
         };
         me.fullscreenDisable = function () {
             me.$img.addClass('imgthumb');
             me.$img.removeClass('imgfull');
-            me.$context.addClass(me.thumbnailClass);
-            me.$context.removeClass(me.fullscreenClass);
+            me.$context.addClass(settings.thumbnailClass);
+            me.$context.removeClass(settings.fullscreenClass);
         };
         me.loadSlide = function (id) {
             if (!me.slides) return;
+            log('start loading ' + id);
 
             var imageSrc = me.slides[id];
             tmpImage.one('load', function () {
@@ -124,7 +127,6 @@ var Presentator = (function (w, d, $) {
                 me.$prevBtn.addClass('disabled');
                 me.$nextBtn.addClass('disabled');
             }
-
         };
         me.forward = function () {
             var newSlideNumber = Math.min(me.currentSlide + 1, me.slidesCount - 1);
@@ -136,10 +138,12 @@ var Presentator = (function (w, d, $) {
         };
 
         me.init();
-
         return me;
     };
 
+    w.Presentator = Presentator;
+    $.fn.presentator = function() {
+        return this.each(function() { Presentator({context: this}); });
+    };
     statics.init();
-    return instance;
 })(window, document, jQuery);
