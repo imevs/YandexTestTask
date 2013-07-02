@@ -39,8 +39,7 @@
         if (!(this instanceof arguments.callee)) {
             return new arguments.callee(options);
         }
-        var me = this,
-            tmpImage = $('<img>'),
+        var me = this, tmpImage = $('<img>'),
             log = options.logger || function (msg) {
                 w.console.log(msg);
             };
@@ -49,53 +48,55 @@
 
         statics.addToPool(me);
 
-        me.$context = $(options.context);
+        me.init = function (options) {
+            me.$context = $(options.context);
 
-        var settings = $.extend( {
-            'url'             : me.$context.data('url') || 'images.json',
-            'prevBtn'         : '.prev',
-            'nextBtn'         : '.next',
-            'thumbnailClass'  : 'span4',
-            'fullscreenClass' : 'span10'
-        }, options);
-        settings.dataRoot = me.$context.data('root') || 'items';
-        settings.dataSrcKey = me.$context.data('key') || '';
+            var dataUrl = me.$context.data('url');
+            me.settings = $.extend( {
+                'url'             : dataUrl ? dataUrl + '&callback=?' : 'images.json',
+                'prevBtn'         : '.prev',
+                'nextBtn'         : '.next',
+                'thumbnailClass'  : 'span4',
+                'fullscreenClass' : 'span10'
+            }, options);
+            me.settings.dataRoot = me.$context.data('root') || 'items';
+            me.settings.dataSrcKey = me.$context.data('key') || '';
 
-        me.$nextBtn = $(settings.nextBtn, me.$context);
-        me.$prevBtn = $(settings.prevBtn, me.$context);
-        me.$img = $('img', me.$context);
-        me.currentSlide = -1;
-        me.slidesCount = 0;
-        me.slides = options.slides;
+            me.$nextBtn = $(me.settings.nextBtn, me.$context);
+            me.$prevBtn = $(me.settings.prevBtn, me.$context);
+            me.$img = $('img', me.$context);
+            me.currentSlide = -1;
+            me.slidesCount = 0;
+            me.slides = options.slides;
 
-        me.init = function () {
             me.$prevBtn.click(function () { me.back(); });
             me.$nextBtn.click(function () { me.forward(); });
             me.$img.click(function () { me.fullscreenToggle(); });
             me.$img.addClass('imgthumb');
             me.setActiveSlide(0);
-            $.getJSON(settings.url).done(function (data) {
-                me.slides = $.map(data[settings.dataRoot], function (item) {
-                    return settings.dataSrcKey ? item[settings.dataSrcKey] : item;
-                });
-                me.slidesCount = me.slides.length;
-                me.setActiveSlide(0);
-            }).error(function () {
+            $.getJSON(me.settings.url).done(me.onLoad).error(function () {
                 log('Origin ' + d.location.origin + ' is not allowed by Access-Control-Allow-Origin.');
             });
+        };
+        me.onLoad = function (data) {
+            me.slides = $.map(data[me.settings.dataRoot], function (item) {
+                return me.settings.dataSrcKey ? item[me.settings.dataSrcKey] : item;
+            });
+            me.slidesCount = me.slides.length;
+            me.setActiveSlide(0);
         };
         me.fullscreenToggle = function () {
             statics.disableFullScreenForAll(me);
             me.$img.toggleClass('imgthumb');
             me.$img.toggleClass('imgfull');
-            me.$context.toggleClass(settings.thumbnailClass);
-            me.$context.toggleClass(settings.fullscreenClass);
+            me.$context.toggleClass(me.settings.thumbnailClass);
+            me.$context.toggleClass(me.settings.fullscreenClass);
         };
         me.fullscreenDisable = function () {
             me.$img.addClass('imgthumb');
             me.$img.removeClass('imgfull');
-            me.$context.addClass(settings.thumbnailClass);
-            me.$context.removeClass(settings.fullscreenClass);
+            me.$context.addClass(me.settings.thumbnailClass);
+            me.$context.removeClass(me.settings.fullscreenClass);
         };
         me.loadSlide = function (id) {
             if (!me.slides) return;
@@ -137,7 +138,7 @@
             me.setActiveSlide(newSlideNumber);
         };
 
-        me.init();
+        me.init(options);
         return me;
     };
 
