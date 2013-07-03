@@ -1,5 +1,40 @@
 (function (w, d, $) {
 
+    var statics = {
+        instances: [],
+        currentPresentation: null,
+        addToPool: function (obj) {
+            statics.instances.push(obj);
+        },
+        initHotKeys: function () {
+            $(d).keyup(function (event) {
+                var activePresentation = statics.currentPresentation;
+                if (!activePresentation) return;
+
+                if (event.keyCode == 37 || event.keyCode == 38) {
+                    activePresentation.back();
+                }
+                if (event.keyCode == 39 || event.keyCode == 40) {
+                    activePresentation.forward();
+                }
+            });
+        },
+        disableFullScreenForAll: function (current) {
+            statics.currentPresentation = current;
+            for (var i = 0; i < statics.instances.length; i++) {
+                if (statics.instances[i] !== statics.currentPresentation) {
+                    statics.instances[i].fullscreenDisable();
+                }
+            }
+        },
+        init: function () {
+            $(function () {
+                $('.presentator').presentator();
+                statics.initHotKeys();
+            });
+        }
+    };
+
     var Presentator = function (options) {
         if (!(this instanceof arguments.callee)) {
             return new arguments.callee(options);
@@ -47,57 +82,7 @@
     };
 
     Presentator.prototype = {
-        /**
-         * @static
-         */
-        instances: [],
-        /**
-         * @static
-         */
-        currentPresentation: null,
-        /**
-         * @static
-         */
-        addToPool: function (obj) {
-            statics.instances.push(obj);
-        },
-        /**
-         * @static
-         */
-        initHotKeys: function () {
-            $(d).keyup(function (event) {
-                var activePresentation = statics.currentPresentation;
-                if (!activePresentation) return;
-
-                if (event.keyCode == 37 || event.keyCode == 38) {
-                    activePresentation.back();
-                }
-                if (event.keyCode == 39 || event.keyCode == 40) {
-                    activePresentation.forward();
-                }
-            });
-        },
-        /**
-         * @static
-         */
-        disableFullScreenForAll: function (current) {
-            statics.currentPresentation = current;
-            for (var i = 0; i < statics.instances.length; i++) {
-                if (statics.instances[i] !== statics.currentPresentation) {
-                    statics.instances[i].fullscreenDisable();
-                }
-            }
-        },
-        /**
-         * @static
-         */
-        init: function () {
-            $(function () {
-                $('.presentator').presentator();
-                statics.initHotKeys();
-            });
-        },
-
+        constructor: Presentator,
         onLoad           : function (data) {
             var me = this;
             me.slides = $.map(data[me.settings.dataRoot], function (item) {
@@ -167,8 +152,6 @@
             me.setActiveSlide(newSlideNumber);
         }
     };
-
-    var statics = Presentator.prototype;
 
     w.Presentator = Presentator;
     $.fn.presentator = function() {
