@@ -1,40 +1,5 @@
 (function (w, d, $) {
 
-    var statics = {
-        instances: [],
-        currentPresentation: null,
-        addToPool: function (obj) {
-            statics.instances.push(obj);
-        },
-        initHotKeys: function () {
-            $(d).keyup(function (event) {
-                var activePresentation = statics.currentPresentation;
-                if (!activePresentation) return;
-
-                if (event.keyCode == 37 || event.keyCode == 38) {
-                    activePresentation.back();
-                }
-                if (event.keyCode == 39 || event.keyCode == 40) {
-                    activePresentation.forward();
-                }
-            });
-        },
-        disableFullScreenForAll: function (current) {
-            statics.currentPresentation = current;
-            for (var i = 0; i < statics.instances.length; i++) {
-                if (statics.instances[i] !== statics.currentPresentation) {
-                    statics.instances[i].fullscreenDisable();
-                }
-            }
-        },
-        init: function () {
-            $(function () {
-                $('.presentator').presentator();
-                statics.initHotKeys();
-            });
-        }
-    };
-
     var Presentator = function (options) {
         if (!(this instanceof arguments.callee)) {
             return new arguments.callee(options);
@@ -81,74 +46,129 @@
         return me;
     };
 
-    Presentator.prototype.onLoad = function (data) {
-        var me = this;
-        me.slides = $.map(data[me.settings.dataRoot], function (item) {
-            return me.settings.dataSrcKey ? item[me.settings.dataSrcKey] : item;
-        });
-        me.slidesCount = me.slides.length;
-        me.setActiveSlide(0);
-    };
-    Presentator.prototype.fullscreenToggle = function () {
-        var me = this;
-        statics.disableFullScreenForAll(me);
-        me.$img.toggleClass('imgthumb');
-        me.$img.toggleClass('imgfull');
-        me.$context.toggleClass(me.settings.thumbnailClass);
-        me.$context.toggleClass(me.settings.fullscreenClass);
-    };
-    Presentator.prototype.fullscreenDisable = function () {
-        var me = this;
-        me.$img.addClass('imgthumb');
-        me.$img.removeClass('imgfull');
-        me.$context.addClass(me.settings.thumbnailClass);
-        me.$context.removeClass(me.settings.fullscreenClass);
-    };
-    Presentator.prototype.loadSlide = function (id) {
-        var me = this;
+    Presentator.prototype = {
+        /**
+         * @static
+         */
+        instances: [],
+        /**
+         * @static
+         */
+        currentPresentation: null,
+        /**
+         * @static
+         */
+        addToPool: function (obj) {
+            statics.instances.push(obj);
+        },
+        /**
+         * @static
+         */
+        initHotKeys: function () {
+            $(d).keyup(function (event) {
+                var activePresentation = statics.currentPresentation;
+                if (!activePresentation) return;
 
-        if (!me.slides) return;
-        me.log('start loading ' + id);
-
-        var imageSrc = me.slides[id];
-        me.tmpImage.one('load', function () {
-            me.log('loaded ' + id);
-            me.$img.attr('src', imageSrc);
-        }).attr('src', imageSrc);
-    };
-    Presentator.prototype.setActiveSlide = function (number) {
-        var me = this;
-
-        if (number == me.currentSlide) return;
-
-        if (me.slidesCount) {
-            me.currentSlide = number;
-            me.loadSlide(me.currentSlide);
-
-            if (me.currentSlide >= me.slidesCount - 1) {
-                me.$nextBtn.addClass('disabled');
-            } else if (me.currentSlide == 0) {
-                me.$nextBtn.removeClass('disabled');
-                me.$prevBtn.addClass('disabled');
-            } else {
-                me.$prevBtn.removeClass('disabled');
-                me.$nextBtn.removeClass('disabled');
+                if (event.keyCode == 37 || event.keyCode == 38) {
+                    activePresentation.back();
+                }
+                if (event.keyCode == 39 || event.keyCode == 40) {
+                    activePresentation.forward();
+                }
+            });
+        },
+        /**
+         * @static
+         */
+        disableFullScreenForAll: function (current) {
+            statics.currentPresentation = current;
+            for (var i = 0; i < statics.instances.length; i++) {
+                if (statics.instances[i] !== statics.currentPresentation) {
+                    statics.instances[i].fullscreenDisable();
+                }
             }
-        } else {
-            me.$prevBtn.addClass('disabled');
-            me.$nextBtn.addClass('disabled');
+        },
+        /**
+         * @static
+         */
+        init: function () {
+            $(function () {
+                $('.presentator').presentator();
+                statics.initHotKeys();
+            });
+        },
+
+        onLoad           : function (data) {
+            var me = this;
+            me.slides = $.map(data[me.settings.dataRoot], function (item) {
+                return me.settings.dataSrcKey ? item[me.settings.dataSrcKey] : item;
+            });
+            me.slidesCount = me.slides.length;
+            me.setActiveSlide(0);
+        },
+        fullscreenToggle : function () {
+            var me = this;
+            statics.disableFullScreenForAll(me);
+            me.$img.toggleClass('imgthumb');
+            me.$img.toggleClass('imgfull');
+            me.$context.toggleClass(me.settings.thumbnailClass);
+            me.$context.toggleClass(me.settings.fullscreenClass);
+        },
+        fullscreenDisable: function () {
+            var me = this;
+            me.$img.addClass('imgthumb');
+            me.$img.removeClass('imgfull');
+            me.$context.addClass(me.settings.thumbnailClass);
+            me.$context.removeClass(me.settings.fullscreenClass);
+        },
+        loadSlide        : function (id) {
+            var me = this;
+
+            if (!me.slides) return;
+            me.log('start loading ' + id);
+
+            var imageSrc = me.slides[id];
+            me.tmpImage.one('load',function () {
+                me.log('loaded ' + id);
+                me.$img.attr('src', imageSrc);
+            }).attr('src', imageSrc);
+        },
+        setActiveSlide   : function (number) {
+            var me = this;
+
+            if (number == me.currentSlide) return;
+
+            if (me.slidesCount) {
+                me.currentSlide = number;
+                me.loadSlide(me.currentSlide);
+
+                if (me.currentSlide >= me.slidesCount - 1) {
+                    me.$nextBtn.addClass('disabled');
+                } else if (me.currentSlide == 0) {
+                    me.$nextBtn.removeClass('disabled');
+                    me.$prevBtn.addClass('disabled');
+                } else {
+                    me.$prevBtn.removeClass('disabled');
+                    me.$nextBtn.removeClass('disabled');
+                }
+            } else {
+                me.$prevBtn.addClass('disabled');
+                me.$nextBtn.addClass('disabled');
+            }
+        },
+        forward          : function () {
+            var me = this;
+            var newSlideNumber = Math.min(me.currentSlide + 1, me.slidesCount - 1);
+            me.setActiveSlide(newSlideNumber);
+        },
+        back             : function () {
+            var me = this;
+            var newSlideNumber = Math.max(me.currentSlide - 1, 0);
+            me.setActiveSlide(newSlideNumber);
         }
     };
-    Presentator.prototype.forward = function () {
-        var me = this;
-        var newSlideNumber = Math.min(me.currentSlide + 1, me.slidesCount - 1);
-        me.setActiveSlide(newSlideNumber);
-    };
-    Presentator.prototype.back = function () {
-        var me = this;
-        var newSlideNumber = Math.max(me.currentSlide - 1, 0);
-        me.setActiveSlide(newSlideNumber);
-    };
+
+    var statics = Presentator.prototype;
 
     w.Presentator = Presentator;
     $.fn.presentator = function() {
